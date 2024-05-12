@@ -1,17 +1,14 @@
-`default_nettype none
-`include "cpu.v"
+
+`include "src/cpu.v"
 module top(input rst, 
            input instr_we, 
-           input [7:0] cpu_fill, 
-           output [1:0] cpu_out,
-           output [2:0] RGB);
+           output [1:0] cpu_out);
 
     wire clk;
     reg [31:0] counter;
 
-    assign RGB[0] = ~counter[26];
-    assign RGB[1] = ~counter[27];
-    assign RGB[2] = ~counter[28];
+    reg [7:0] cpu_fill;
+
     //10khz used for low power applications (or sleep mode)
     SB_HFOSC SB_HFOSC_inst(
         .CLKHFEN(1),
@@ -19,16 +16,22 @@ module top(input rst,
         .CLKHF(clk)
     );
 
-    cpu cpu_init(.clk(counter[26]),
+    cpu cpu_init(.clk(counter[22]),
                  .rst(rst),
                  .cpu_out(cpu_out),
                  .data_in(cpu_fill),
                  .instr_we(instr_we));
 
+    initial begin 
+        counter = 0;
+    end
+
     always @(posedge clk) begin 
         if (rst) begin 
             counter <= 0;
         end
+        if (instr_we)
+            cpu_fill <= counter[31:24];
         counter <= counter + 1;
     end
 

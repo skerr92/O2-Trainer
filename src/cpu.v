@@ -8,9 +8,9 @@ module cpu(input wire clk,
            input wire [7:0] data_in,
            input wire instr_we);
 
-    reg [3:0] pc;
+    reg [5:0] pc;
     reg [1:0] alu_op;
-    reg [1:0] reg_file [1:0];
+    reg [1:0] reg_file [3:0];
     reg we;
     reg [1:0] out;
     assign cpu_out = out;
@@ -43,10 +43,17 @@ module cpu(input wire clk,
                  .d_in(mem_in),
                  .d_out(mem_out));
 
+    initial begin 
+        pc = 0;
+        state = 0;
+        out = 0;
+    end
+
     always @(posedge clk) begin 
         if (rst) begin 
             pc <= 0;
             state <= 0;
+            out <= 0;
         end
          
             case (state)

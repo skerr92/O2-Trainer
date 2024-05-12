@@ -6,17 +6,14 @@ module mem(input wire clk,
            input wire [1:0] d_in, 
            output reg [1:0] d_out);
 
-    reg [1:0] mem [0:15];
+    reg [1:0] mem [15:0];
 
     always @(posedge clk) begin 
 
         if (we) begin 
             mem[addr] <= d_in;
-            d_out <= mem[addr];
         end
-        else begin 
-            d_out <= mem[addr];
-        end
+        d_out <= mem[addr];
     end
 
 endmodule
